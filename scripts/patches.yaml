@@ -749,6 +749,13 @@ patches:
     effect: "Users can fully disable password manager functionality from the UI."
     category: "User Experience"
 
+  - file: "a-c-reduce-thumbnail-cache.patch"
+    name: "Reduce Thumbnail Cache Size and Quality (Android Components)"
+    description: "Lowers the disk cache limit for thumbnails from 100MB to 1MB and reduces JPEG encoding quality to 1."
+    reason: "To significantly reduce CPU usage and disk I/O during thumbnail generation, preventing UI lags on older or low-end devices."
+    effect: "Improves interface responsiveness on weak hardware at the cost of highly pixelated tab history previews."
+    category: "User Experience"
+
   # User Interface
   - file: "fenix-ironfox-branding.patch"
     name: "IronFox Branding (Fenix)"
