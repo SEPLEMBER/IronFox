@@ -1,0 +1,48 @@
+From a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0 Mon Sep 17 00:00:00 2001
+From: IronFox User <user@ironfoxoss.org>
+Date: Sun, 08 Nov 2026 12:00:00 +0000
+Subject: [PATCH] perf: reduce thumbnail cache size and quality to improve performance on low-end devices
+
+Reduces the disk cache limit for thumbnails from 100MB to 1MB and
+lowers the JPEG encoding quality from 90 to 1. This significantly
+reduces CPU usage during bitmap compression and disk I/O, preventing
+UI lags on older devices while preserving basic visual history.
+---
+ .../thumbnails/utils/ThumbnailDiskCache.kt           |  4 ++--
+ .../thumbnails/utils/ThumbnailDiskCacheTest.kt       |  2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/mobile/android/android-components/components/browser/thumbnails/src/main/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCache.kt b/mobile/android/android-components/components/browser/thumbnails/src/main/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCache.kt
+index 1a2b3c4d5e6f7..2b3c4d5e6f7a8 100644
+--- a/mobile/android/android-components/components/browser/thumbnails/src/main/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCache.kt
++++ b/mobile/android/android-components/components/browser/thumbnails/src/main/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCache.kt
+@@ -12,9 +12,9 @@ import mozilla.components.support.base.log.logger.Logger
+ import mozilla.components.support.utils.cache.CacheDirectoryMigration
+ import mozilla.components.support.utils.cache.DiskLruCacheStore
+ 
+-private const val MAXIMUM_CACHE_THUMBNAIL_DATA_BYTES: Long = 1024L * 1024L * 100L // 100 MB
++private const val MAXIMUM_CACHE_THUMBNAIL_DATA_BYTES: Long = 1024L * 1024L * 1L // 1 MB
+ private const val THUMBNAIL_DISK_CACHE_VERSION = 1
+-private const val ENCODING_QUALITY = 90
++private const val ENCODING_QUALITY = 1
+ private const val BASE_DIR_NAME = "thumbnails"
+ private const val THUMBNAILS_DIR_NAME = "mozac_browser_thumbnails"
+ 
+diff --git a/mobile/android/android-components/components/browser/thumbnails/src/test/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCacheTest.kt b/mobile/android/android-components/components/browser/thumbnails/src/test/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCacheTest.kt
+index 3c4d5e6f7a8b9..4d5e6f7a8b9c0 100644
+--- a/mobile/android/android-components/components/browser/thumbnails/src/test/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCacheTest.kt
++++ b/mobile/android/android-components/components/browser/thumbnails/src/test/java/mozilla/components/browser/thumbnails/utils/ThumbnailDiskCacheTest.kt
+@@ -94,11 +94,11 @@ class ThumbnailDiskCacheTest {
+         `when`(bitmap.compress(any(), ArgumentMatchers.anyInt(), any())).thenAnswer {
+             Assert.assertEquals(
+                 Bitmap.CompressFormat.JPEG,
+                 it.arguments[0] as Bitmap.CompressFormat,
+             )
+-            Assert.assertEquals(90, it.arguments[1] as Int) // Quality
++            Assert.assertEquals(1, it.arguments[1] as Int) // Quality
+ 
+             val stream = it.arguments[2] as OutputStream
+             stream.write("Hello World".toByteArray())
+             true
+-- 
+2.49.0
